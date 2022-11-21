@@ -75,7 +75,7 @@ const login  = async (req: Request, res: Response): Promise<Response> => {
         const token = await jsonwebtoken.sign({id: user.id}, "123", {expiresIn: '24h'})
         
         const account = await db('accounts').where('id', user.accountid);
-        console.log (account)
+    
 
         return res.status(200).send({msg: `Bem-vindo ${name}, informações da sua conta:`,
         idUsuário: user.id,
@@ -93,5 +93,4 @@ const login  = async (req: Request, res: Response): Promise<Response> => {
 export {
     createUser,
     login
-
 }

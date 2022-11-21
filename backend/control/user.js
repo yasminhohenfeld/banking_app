@@ -85,7 +85,6 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         const token = yield jsonwebtoken.sign({ id: user.id }, "123", { expiresIn: '24h' });
         const account = yield (0, database_1.db)('accounts').where('id', user.accountid);
-        console.log(account);
         return res.status(200).send({ msg: `Bem-vindo ${name}, informações da sua conta:`,
             idUsuário: user.id,
             name: user.username,
