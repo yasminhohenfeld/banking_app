@@ -9,23 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.listTransfer = exports.createTransfer = void 0;
+exports.listTransactions = exports.createTransfer = void 0;
 const jsonwebtoken_1 = require("jsonwebtoken");
 const transferSchemas_1 = require("../validations/transferSchemas");
 const database_1 = require("../database");
-const user = (req) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { authorization } = req.headers;
-        if (!authorization) {
-            return ("Não autorizado");
-        }
-        const token = authorization.replace('Bearer ', '').trim();
-        console.log(authorization);
-    }
-    catch (e) {
-        return (e);
-    }
-});
 const createTransfer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { authorization } = req.headers;
     if (!authorization) {
@@ -60,14 +47,40 @@ const createTransfer = (req, res) => __awaiter(void 0, void 0, void 0, function*
             createdat: new Date(Date.now())
         };
         yield (0, database_1.db)('transactions').insert(transaction);
-        return res.status(200).send("Ok");
+        return res.status(200).send("Transação concluida com sucesso!");
     }
     catch (e) {
         return res.status(500).send(`msg: ${e}`);
     }
 });
 exports.createTransfer = createTransfer;
-const listTransfer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    return res.status(200).send("Ok");
+function isVailidStringDate(date) {
+    return (new Date(date)).toString() !== 'Invalid Date';
+}
+const listTransactions = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { authorization } = req.headers;
+    if (!authorization) {
+        return res.send("Não autorizado!");
+    }
+    const token = authorization.replace('Bearer ', '').trim();
+    const { id } = (0, jsonwebtoken_1.verify)(token, "123");
+    const username = yield (0, database_1.db)('users').where({ id }).first();
+    try {
+        let transactions = yield (0, database_1.db)('transactions').where({ debitedaccountid: username.accountid }).orWhere({ creditedaccountid: username.accountid });
+        if ((req.query.cashout !== undefined) && (req.query.cashout !== null) && (req.query.cashout === 'false')) {
+            transactions = transactions.filter(transaction => transaction.debitedaccountid === parseInt(username.accountid));
+        }
+        if ((req.query.cashin !== undefined) && (req.query.cashin !== null) && (req.query.cashin === 'false')) {
+            transactions = transactions.filter(transaction => transaction.creditedaccountid === parseInt(username.accountid));
+        }
+        const data = req.query.data;
+        if ((req.query.data !== undefined) && (req.query.data !== undefined) && (isVailidStringDate(data) === false)) {
+            transactions = transactions.filter(transaction => transaction.createdat === new Date(data));
+        }
+        return res.status(200).send(transactions);
+    }
+    catch (e) {
+        return res.status(500).send(`msg: ${e}`);
+    }
 });
-exports.listTransfer = listTransfer;
+exports.listTransactions = listTransactions;

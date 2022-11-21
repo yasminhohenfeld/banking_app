@@ -14,3 +14,4 @@ route.post('/user', user_1.createUser);
 route.post('/login', user_1.login);
 route.use(verifyLogin_1.verifyLogin);
 route.post('/transfer', transactions_1.createTransfer);
+route.get('/transactions', transactions_1.listTransactions);
