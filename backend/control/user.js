@@ -32,9 +32,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createUser = void 0;
+exports.login = exports.createUser = void 0;
 const userSchemas_1 = require("../validations/userSchemas");
+const loginSchemas_1 = require("../validations/loginSchemas");
+const jsonwebtoken = __importStar(require("jsonwebtoken"));
 const bcrypt = __importStar(require("bcrypt"));
+const database_1 = require("../database");
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, password } = req.body;
     try {
@@ -50,11 +53,48 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             return res.status(400).send({ msg: "A senha precisa conter letras e pelo menos uma letra maíuscula" });
         }
         const passwordEncrypted = yield bcrypt.hash(password, 10);
-        console.log(passwordEncrypted);
-        return res.status(200).send({ msg: "Usuario" });
+        const username = yield (0, database_1.db)('users').where('username', name);
+        if (username.length > 0) {
+            return res.status(400).send({ msg: "Já existe um usuário cadastrado com este nome" });
+        }
+        const accounts = yield (0, database_1.db)("accounts").insert({ balance: 100 }).returning("id");
+        const data = {
+            username: name,
+            password: passwordEncrypted,
+            accountid: accounts[0].id
+        };
+        const users = yield (0, database_1.db)("users").insert(data).returning("id");
+        return res.status(200).send({ msg: "Usuário cadastrado com sucesso!" });
     }
     catch (e) {
         return res.status(500).send(`msg: ${e}`);
     }
 });
 exports.createUser = createUser;
+const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name, password } = req.body;
+    try {
+        yield loginSchemas_1.loginSchemas.validate(req.body);
+        const user = yield (0, database_1.db)('users').where('username', name).first();
+        if (user === undefined) {
+            return res.status(400).send("Usuário não encontrado. Insira um nome e uma senha válida");
+        }
+        const isVerfied = yield bcrypt.compare(password, user.password);
+        if (isVerfied === false) {
+            return res.status(400).send("Senha incorreta");
+        }
+        const token = yield jsonwebtoken.sign({ id: user.id }, "123", { expiresIn: '24h' });
+        const account = yield (0, database_1.db)('accounts').where('id', user.accountid);
+        console.log(account);
+        return res.status(200).send({ msg: `Bem-vindo ${name}, informações da sua conta:`,
+            idUsuário: user.id,
+            name: user.username,
+            idConta: account[0].id,
+            saldo: account[0].balance,
+            token: token });
+    }
+    catch (e) {
+        return res.status(500).send(`msg: ${e}`);
+    }
+});
+exports.login = login;

@@ -1,5 +1,3 @@
-CREATE DATABASE 
-
 create table if not exists accounts (
   id serial primary key, 
   balance integer not null
@@ -8,10 +6,9 @@ create table if not exists accounts (
 create table if not exists users(
   id serial primary key, 
   username text not null,
-  passowrd text not null, 
-  accountId serial references accounts (id) not null
+  password text not null,
+  accountId bigint references accounts (id)
 );
-
 
 create table if not exists transactions (
   id serial primary key, 
@@ -20,6 +17,3 @@ create table if not exists transactions (
   value integer not null,
   createdAt date not null default now()
 );
-
-
-

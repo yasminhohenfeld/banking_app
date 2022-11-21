@@ -9,3 +9,4 @@ const user_1 = require("./control/user");
 const route = (0, express_1.default)();
 exports.route = route;
 route.post('/user', user_1.createUser);
+route.post('/login', user_1.login);

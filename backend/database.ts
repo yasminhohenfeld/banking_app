@@ -1,17 +1,17 @@
-import * as knex from 'knex';
+import knex from 'knex';
 
-const defaults = {
+const db = knex({
     client: 'pg',
     connection: {
               host: 'localhost',
               user: 'postgres',
-              password: 'admin',
-              database: 'app_bank',
+              password: 'postgres',
+              database: 'postgres',
               port: 5432,
               ssl: {
                 rejectUnauthorized: false,
               },
             }
-}
+})
 
-export {defaults}
+export {db}
