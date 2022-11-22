@@ -4,7 +4,7 @@
 
 Para executar o projeto, será necessário ter instalado:
 
--[Docker](../https://www.docker.com/)
+-[Docker](https://www.docker.com/)
 
 - Docker
 - Node
