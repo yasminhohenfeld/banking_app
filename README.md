@@ -21,12 +21,12 @@ Na parte de banco de dados, utilizando a porta 5432, vamos precisar executar est
 docker run --name postgres -e POSTGRES_PASSWORD=postgres -d postgres
 ```
 
-A aplicação está sendo rodada na porta 3000, para começar a executá-la utilizar:
+Para executar a aplicação utilizar este comando:
 
 ```
 npx tsc && node index.js
 ```
 
-
+A aplicação estará disponível em [localhost:3000/](localhost:3000/) 
 
 
