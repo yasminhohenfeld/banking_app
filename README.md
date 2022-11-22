@@ -9,7 +9,7 @@ Para executar o projeto, será necessário ter instalado:
 
 ### Rodando a aplicação
 
-É necessário que todos os comandos sejam executados dentro da pasta 'backend'
+- É necessário que todos os comandos sejam executados dentro da pasta 'backend'.
 
 Para instalar as dependências do projeto, será necessário executar:
 
