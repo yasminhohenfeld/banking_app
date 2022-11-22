@@ -2,17 +2,17 @@
 
 ## Começando
 
-Para executar o projeto, será necessário ter instalado:
+### Para executar o projeto, será necessário ter instalado:
 
--[Docker](https://www.docker.com/)
+- [Docker](https://www.docker.com/) 
+- [Node](https://nodejs.org/en/download/)
+- [Typescript](https://www.npmjs.com/package/typescript)
 
-- Docker
-- Node
-- Typescript
-
-Para iniciar o projeto, executar no terminal:
+### Para iniciar o projeto, executar no terminal:
 
 ```npm install```
+
+### Banco de Dados
 
 
 
